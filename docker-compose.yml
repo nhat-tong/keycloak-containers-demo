@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  postgresdb:
+    image: postgres:alpine
+    container_name: postgresdb
+    ports:
+    - 5432:5432
+    volumes:
+    - postgresdemo:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloakdb
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak123
+
+  keycloak:
+    build:
+      context: .
+      dockerfile: ./keycloak/Dockerfile
+    container_name: demo-keycloak
+    ports:
+    - 8080:8080
+    depends_on:
+    - postgresdb
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin123
+      DB_VENDOR: postgres
+      DB_ADDR: postgresdb
+      DB_PORT: 5432
+      DB_DATABASE: keycloakdb
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak123
+
+  mailserver:
+    image: mailhog/mailhog
+    container_name: demo-mail
+    ports:
+    - 8025:8025
+
+  ldap:
+    build:
+      context: ./ldap
+    container_name: demo-ldap
+    ports:
+    - 389:389
+
+  myapp:
+    build:
+      context: ./js-console
+    container_name: js-console
+    ports:
+    - 8000:80
+
+volumes:
+  postgresdemo:

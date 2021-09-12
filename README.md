@@ -6,6 +6,13 @@ The steps included here requires Docker (or Podman). It should also be possible 
 adapting the steps accordingly.
 
 
+## Docker compose
+
+Run:
+```
+mvn clean install && docker-compose up -d
+```
+
 ## Start containers
 
 ### Create a user defined network
@@ -449,6 +456,23 @@ Select `Required Actions`, `Register`, then select `WebAuthn Register` and click
 
 Open the [JS Console](http://localhost:8000) and click Logout. Login again. After you've done the
 email based login you will be prompted to configure WebAuthn. You'll need a WebAuthn security key to try this out.
+
+## REST API
+
+Obtain an access token:
+```
+export access_token=$(\
+    curl -X POST http://localhost:8080/auth/realms/demo/protocol/openid-connect/token \
+    -H 'content-type: application/x-www-form-urlencoded' \
+    -d 'username=test&password=test&grant_type=password&client_id=js-service' | jq --raw-output '.access_token' \
+ )
+```
+
+Access protected ressource using access token:
+```
+curl -v -X GET http://localhost:8001/user/profile \
+-H 'content-type: application/json' -H 'Authorization: Bearer $access_token'
+```
 
 ## Cool stuff we didn't cover!
 

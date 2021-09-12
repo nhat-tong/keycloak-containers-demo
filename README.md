@@ -459,6 +459,8 @@ email based login you will be prompted to configure WebAuthn. You'll need a WebA
 
 ## REST API
 
+Go to the service client and then disable "Standard Flow Enabled"
+
 Obtain an access token:
 ```
 export access_token=$(\
@@ -527,3 +529,5 @@ We covered how you can easily secure your applications with Keycloak.
 
 For more information about Keycloak check out our [homepage](https://www.keycloak.org) and 
 our [documentation](https://www.keycloak.org/documentation.html).
+
+<strong>See this repo: https://github.com/nhat-tong/Keycloak-Identity-and-Access-Management-for-Modern-Applications</strong>

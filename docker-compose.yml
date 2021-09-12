@@ -51,6 +51,13 @@ services:
     container_name: js-console
     ports:
     - 8000:80
+  
+  myservice:
+    build:
+      context: ./js-service
+    container_name: js-service
+    ports:
+    - 8001:3000
 
 volumes:
   postgresdemo:

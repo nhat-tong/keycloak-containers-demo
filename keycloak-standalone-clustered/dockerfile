@@ -1,0 +1,3 @@
+FROM jboss/keycloak:15.0.2
+
+CMD ["-b" "0.0.0.0" "-c" "standalone-ha.xml"]

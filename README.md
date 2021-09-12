@@ -28,7 +28,7 @@ Then build the image with:
 
 Finally run it with:
 
-    docker run --name demo-keycloak -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin \
+    docker run -d --name demo-keycloak -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin \
         -p 8080:8080 --net demo-network demo-keycloak
 
 ### Start LDAP server
@@ -41,7 +41,7 @@ First build the image with:
     
 Then run it with:
 
-    docker run --name demo-ldap --net demo-network demo-ldap
+    docker run -d --name demo-ldap --net demo-network demo-ldap
     
 ### Start mail server
 
@@ -62,7 +62,7 @@ First build the image with:
     
 Then run it with:
 
-    docker run --name demo-js-console -p 8000:80 demo-js-console
+    docker run -d --name demo-js-console -p 8000:80 demo-js-console
 
 
 
@@ -241,6 +241,8 @@ Fill in the following values:
 * Token Claim Name: `user_type`
 * Claim JSON Type: `String`
 
+Now click on `Users` and find the user you want to login with. Click on `Groups`, then select `mygroup` and click `join` button.
+
 Find the `js-console` client again and add the `myscope` as a default client scope.
 
 Go back to the [JS Console](http://localhost:8000) and click `Refresh`, then `Access Token JSON`.
@@ -270,6 +272,11 @@ Now go to `Users` and click `View all users`. You will see two new users `bwilso
 
 Try opening the [JS Console](http://localhost:8000) again and login with one of
 these users.
+
+Because we are set Edit Mode to WRITABLE. That's means all modifications to this user will be synchronized back to ldap.
+Now go to `Users` and select user `bwilson`. Click on the `Credentials` tab and then reset his password.
+
+Try opening the [JS Console](http://localhost:8000) and login again this user `bwilson` but with the new password.
 
 ## Users from GitHub
 

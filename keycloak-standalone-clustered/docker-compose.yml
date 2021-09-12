@@ -1,34 +1,67 @@
-version: "3"
+version: '3'
+
+volumes:
+  postgres_data:
+    driver: local
 
 services:
-  postgresdb:
-    image: postgres
-    ports:
-    - "5432:5432"
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
     volumes:
-    - postgresdata:/var/lib/postgresql/data
+      - postgresdata:/var/lib/postgresql/data
+    restart: 'always'
+    ports:
+    - 5432:5432
     environment:
-      POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: demo
+      POSTGRES_PASSWORD: keycloak123
+      POSTGRES_DB: keycloak
+      POSTGRES_HOST: postgres
+    networks: 
+    - demo-network
+
+  traefik:
+    image: library/traefik:alpine
+    container_name: traefik
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: >
+      --logLevel=ERROR
+      --api.dashboard
+      --docker
+      --entrypoints="Name:http Address::80"
+      --defaultentrypoints="http"
+    ports:
+      - 80:80
+      - 3000:8080
     networks: 
     - demo-network
 
   keycloak:
     image: jboss/keycloak:15.0.2
-    ports:
-    - "8080:8080"
+    command: -c standalone-ha.xml
     environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      DB_VENDOR: postgres # tell keycloak use postgres as db
-      DB_ADDR: postgresdb # postdb instance name
+      DB_VENDOR: postgres
+      DB_ADDR: postgres
+      DB_PORT: 5432
+      DB_DATABASE: keycloak
       DB_USER: keycloak
-      DB_PASSWORD: demo
+      DB_PASSWORD: keycloak123
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin123
+      #JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+      #JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"
     depends_on:
-        - postgresdb
+      - postgres
     networks: 
     - demo-network
+    labels:
+      traefik.enable: true
+      traefik.port: 8080
+      traefik.protocol: http
+      traefik.frontend.rule: Host:localhost
+      traefik.frontend.passHostHeader: true
 
 networks:
   demo-network:

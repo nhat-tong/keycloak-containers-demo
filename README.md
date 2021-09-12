@@ -464,6 +464,14 @@ Not only does Infinispan allow us to cluster within a single data center, but we
 support for multiple data centers. This works, but there are a few improvements that can be made
 here.
 
+```
+cd /home/thqnhat/projects/keycloak/keycloak-containers-demo/keycloak-standalone-clustered
+docker-compose up -d --scale keycloak=2
+```
+
+* Traefik console: http://localhost:3000
+* Traefik lb: http://localhost:80
+
 ### Authorization Services
 
 Keycloak provides a way to centrally manage permissions for resources as well as support for
